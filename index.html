@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANACITY Business — Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ─── RESET & BASE ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Brand */
+      --color-bg-screen:    #121212;
+      --color-bg-card:      #1D1D1D;
+      --color-bg-selectable:#2B2B2B;
+      --color-text-primary: #EBEBEB;
+      --color-text-secondary:#DBDBDB;
+      --color-text-tertiary:#ADADAD;
+      --color-text-disabled:#868686;
+      --color-brand-purple: #663879;
+      --color-brand-purple-light: #7d4693;
+      --color-brand-gold:   #FFD09B;
+      --color-brand-gradient-bottom: #B0814D;
+      --color-brand-gold-dark: #C9924A;
+
+      /* Primary = Gold, Accent = Purple */
+      --color-primary:       #FFD09B;
+      --color-primary-dark:  #B0814D;
+      --color-accent:        #663879;
+      --color-accent-light:  #7d4693;
+      --color-success:      #5FD796;
+      --color-error:        #EA7C7C;
+      --color-info:         #71B4FF;
+      --color-warning:      #FFB347;
+      --color-bg-error:     #290000;
+
+      /* Spacing */
+      --spacing-xs:  4px;
+      --spacing-sm:  8px;
+      --spacing-md:  12px;
+      --spacing-lg:  16px;
+      --spacing-xl:  24px;
+      --spacing-xxl: 32px;
+
+      /* Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      /* Shadows */
+      --shadow-card: 0 2px 16px rgba(0,0,0,0.4);
+      --shadow-glow-gold: 0 0 24px rgba(255,208,155,0.25);
+      --shadow-selected: inset 0 0 10px #FFBF76;
+
+      /* Font */
+      --font-primary: 'Readex Pro', sans-serif;
+      --font-secondary: 'Readex Pro', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--color-bg-screen);
+      color: var(--color-text-primary);
+      font-family: var(--font-primary);
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── TOAST ──────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--color-bg-selectable);
+      border: 1px solid rgba(255,208,155,0.25);
+      color: var(--color-brand-gold);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--color-bg-screen); }
+    ::-webkit-scrollbar-thumb { background: var(--color-bg-selectable); border-radius: 3px; }
+
+    /* ─── NAV ────────────────────────────────────────────────── */
+    .ds-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      background: rgba(18,18,18,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .ds-nav__brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ds-nav__logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ds-nav__divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255,255,255,0.12);
+    }
+    .ds-nav__tagline {
+      font-size: 12px;
+      color: var(--color-text-disabled);
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .ds-nav__links {
+      list-style: none;
+      display: flex;
+      gap: 4px;
+    }
+    .ds-nav__links li a {
+      display: block;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-tertiary);
+      text-decoration: none;
+      border-radius: var(--radius-full);
+      transition: all 0.2s;
+      letter-spacing: -0.2px;
+    }
+    .ds-nav__links li a:hover {
+      color: var(--color-text-primary);
+      background: var(--color-bg-selectable);
+    }
+    .ds-nav__links li a.active {
+      color: var(--color-brand-gold);
+      background: rgba(255,208,155,0.1);
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────── */
+    .ds-hero {
+      position: relative;
+      padding: 100px 48px 80px;
+      overflow: hidden;
+    }
+    .ds-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 800px 400px at 60% 0%, rgba(255,208,155,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 200px at 10% 100%, rgba(102,56,121,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .ds-hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-brand-gold);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .ds-hero__eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--color-brand-gold);
+    }
+    .ds-hero__title {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700;
+      letter-spacing: -2.5px;
+      line-height: 1.05;
+      max-width: 640px;
+      margin-bottom: 20px;
+      background: linear-gradient(160deg, var(--color-text-primary) 50%, var(--color-text-tertiary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ds-hero__subtitle {
+      font-size: 16px;
+      color: var(--color-text-tertiary);
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .ds-hero__badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ds-hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--color-bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      letter-spacing: -0.2px;
+    }
+    .ds-hero__badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-brand-gold);
+    }
+    .ds-hero__stats {
+      display: flex;
+      gap: 48px;
+      margin-top: 48px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .ds-hero__stat-number {
+      display: block;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ds-hero__stat-label {
+      display: block;
+      font-size: 12px;
+      color: var(--color-text-disabled);
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+    }
+
+    /* ─── MAIN LAYOUT ────────────────────────────────────────── */
+    .ds-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px 80px;
+    }
+
+    /* ─── SECTION ────────────────────────────────────────────── */
+    .ds-section {
+      padding: 72px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .ds-section__header {
+      margin-bottom: 48px;
+    }
+    .ds-section__label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-brand-gold);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .ds-section__title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1.2px;
+      color: var(--color-text-primary);
+      margin-bottom: 10px;
+    }
+    .ds-section__description {
+      font-size: 14px;
+      color: var(--color-text-tertiary);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ─── COLOR SYSTEM ───────────────────────────────────────── */
+    .ds-color-group {
+      margin-bottom: 40px;
+    }
+    .ds-color-group__title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-text-disabled);
+      margin-bottom: 16px;
+    }
+    .ds-color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .ds-color-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--color-bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    .ds-color-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .ds-color-card__swatch {
+      height: 72px;
+      width: 100%;
+      position: relative;
+    }
+    .ds-color-card__copy-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: white;
+    }
+    .ds-color-card:hover .ds-color-card__copy-hint {
+      opacity: 1;
+    }
+    .ds-color-card.copied .ds-color-card__swatch {
+      outline: 2px solid var(--color-brand-gold);
+      outline-offset: -2px;
+    }
+    .ds-color-card__info {
+      padding: 12px;
+    }
+    .ds-color-card__name {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
+    }
+    .ds-color-card__token {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-disabled);
+      margin-bottom: 4px;
+    }
+    .ds-color-card__hex {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-brand-gold);
+    }
+
+    /* ─── TYPOGRAPHY ─────────────────────────────────────────── */
+    .ds-type-fonts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .ds-type-font {
+      padding: 28px;
+      background: var(--color-bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-md);
+    }
+    .ds-type-font__name {
+      display: block;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      color: var(--color-text-primary);
+      margin-bottom: 8px;
+    }
+    .ds-type-font__usage {
+      display: block;
+      font-size: 12px;
+      color: var(--color-text-disabled);
+      letter-spacing: 0.2px;
+    }
+    .ds-type-group {
+      margin-bottom: 40px;
+    }
+    .ds-type-group__title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-text-disabled);
+      margin-bottom: 16px;
+    }
+    .ds-type-scale {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .ds-type-item {
+      display: grid;
+      grid-template-columns: 120px 1fr 180px;
+      align-items: center;
+      gap: 24px;
+      padding: 18px 24px;
+      background: var(--color-bg-card);
+      transition: background 0.15s;
+    }
+    .ds-type-item:hover { background: var(--color-bg-selectable); }
+    .ds-type-item__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-brand-gold);
+      font-weight: 500;
+    }
+    .ds-type-item__sample { color: var(--color-text-primary); }
+    .ds-type-item__specs {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-disabled);
+      text-align: right;
+    }
+    .ds-type-hierarchy {
+      background: var(--color-bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-md);
+      padding: 28px;
+    }
+
+    /* ─── SPACING ────────────────────────────────────────────── */
+    .ds-spacing-visual { margin-bottom: 32px; }
+    .ds-spacing-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 60px;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .ds-spacing-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-disabled);
+      font-weight: 500;
+    }
+    .ds-spacing-bar {
+      height: 6px;
+      background: linear-gradient(90deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      border-radius: 3px;
+      min-width: 4px;
+      position: relative;
+    }
+    .ds-spacing-value {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-brand-gold);
+      text-align: right;
+    }
+
+    /* ─── COMPONENTS SECTION ─────────────────────────────────── */
+    .ds-component-group {
+      margin-bottom: 48px;
+    }
+    .ds-component-group__title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-text-disabled);
+      margin-bottom: 16px;
+    }
+    .ds-component-showcase {
+      background: var(--color-bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+    }
+    .ds-component-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .ds-component-row:last-child { margin-bottom: 0; }
+    .ds-component-row--vertical {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    /* ─── BUTTONS ────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      outline: none;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      padding: 10px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn:active::after { opacity: 0.08; }
+
+    .btn--primary {
+      background: linear-gradient(135deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      color: #1a0e00;
+      box-shadow: 0 2px 12px rgba(255,208,155,0.3);
+    }
+    .btn--primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(255,208,155,0.45);
+    }
+    .btn--primary:active { transform: translateY(0); }
+
+    .btn--secondary {
+      background: var(--color-bg-selectable);
+      color: var(--color-text-primary);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn--secondary:hover:not(:disabled) {
+      background: #333;
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn--ghost:hover:not(:disabled) {
+      background: var(--color-bg-selectable);
+      color: var(--color-text-primary);
+    }
+
+    .btn--icon {
+      padding: 9px;
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-selectable);
+      color: var(--color-text-secondary);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .btn--icon:hover:not(:disabled) {
+      background: #333;
+      color: var(--color-text-primary);
+    }
+
+    .btn--fab {
+      padding: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      color: #1a0e00;
+      box-shadow: 0 4px 16px rgba(255,208,155,0.35);
+    }
+    .btn--fab:hover {
+      transform: scale(1.08) translateY(-1px);
+      box-shadow: 0 6px 24px rgba(255,208,155,0.5);
+    }
+
+    .btn--small { padding: 6px 14px; font-size: 12px; }
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* Success / Error button variants */
+    .btn--success {
+      background: rgba(95,215,150,0.15);
+      color: var(--color-success);
+      border: 1px solid rgba(95,215,150,0.3);
+    }
+    .btn--success:hover { background: rgba(95,215,150,0.22); }
+    .btn--error {
+      background: rgba(234,124,124,0.15);
+      color: var(--color-error);
+      border: 1px solid rgba(234,124,124,0.3);
+    }
+    .btn--error:hover { background: rgba(234,124,124,0.22); }
+
+    /* ─── INPUTS ─────────────────────────────────────────────── */
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .input-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.1px;
+    }
+    .input {
+      background: var(--color-bg-selectable);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-primary);
+      font-family: var(--font-primary);
+      font-size: 13px;
+      padding: 10px 14px;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .input:focus {
+      border-color: var(--color-brand-gold);
+      box-shadow: 0 0 0 3px rgba(255,208,155,0.15);
+    }
+    .input::placeholder { color: var(--color-text-disabled); }
+
+    .input--with-icon {
+      display: flex;
+      align-items: center;
+      background: var(--color-bg-selectable);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      gap: 10px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input--with-icon:focus-within {
+      border-color: var(--color-brand-gold);
+      box-shadow: 0 0 0 3px rgba(255,208,155,0.15);
+    }
+    .input--with-icon svg { color: var(--color-text-disabled); flex-shrink: 0; }
+    .input--with-icon input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--color-text-primary);
+      font-family: var(--font-primary);
+      font-size: 13px;
+      flex: 1;
+    }
+    .input--with-icon input::placeholder { color: var(--color-text-disabled); }
+
+    .dropdown {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--color-bg-selectable);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--color-text-disabled);
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      user-select: none;
+    }
+    .dropdown:hover { border-color: rgba(255,255,255,0.16); }
+
+    /* ─── CARDS ──────────────────────────────────────────────── */
+    .card {
+      background: var(--color-bg-selectable);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(255,255,255,0.14);
+      box-shadow: var(--shadow-card);
+    }
+    .card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .card__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.3px;
+    }
+    .card__content { padding: 16px; }
+    .card__text {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 4px;
+    }
+    .card__meta {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+    }
+    .card__actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .card__badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.2px;
+    }
+    .card__badge--success {
+      background: rgba(95,215,150,0.15);
+      color: var(--color-success);
+    }
+
+    .card--contact {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a0e00;
+      flex-shrink: 0;
+    }
+
+    /* ─── DATA ROWS ──────────────────────────────────────────── */
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .data-row:last-child { border-bottom: none; }
+    .data-row__label {
+      font-size: 12px;
+      color: var(--color-text-disabled);
+      font-weight: 500;
+    }
+    .data-row__value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+    .data-row__value--success { color: var(--color-success); }
+
+    /* ─── BADGES ─────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.2px;
+    }
+    .badge::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+    .badge--success  { background: rgba(95,215,150,0.15);  color: var(--color-success);  }
+    .badge--success::before  { background: var(--color-success); }
+    .badge--info     { background: rgba(113,180,255,0.15); color: var(--color-info);     }
+    .badge--info::before     { background: var(--color-info); }
+    .badge--warning  { background: rgba(255,179,71,0.15);  color: var(--color-warning);  }
+    .badge--warning::before  { background: var(--color-warning); }
+    .badge--error    { background: rgba(234,124,124,0.15); color: var(--color-error);    }
+    .badge--error::before    { background: var(--color-error); }
+    .badge--neutral  { background: rgba(255,255,255,0.07); color: var(--color-text-tertiary); }
+    .badge--neutral::before  { background: var(--color-text-disabled); }
+
+    /* ─── CHECKBOX ───────────────────────────────────────────── */
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox input { display: none; }
+    .checkbox__box {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: var(--color-bg-selectable);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .checkbox input:checked ~ .checkbox__box {
+      background: linear-gradient(135deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      border-color: var(--color-brand-gold);
+    }
+    .checkbox input:checked ~ .checkbox__box::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 9px;
+      border: 2px solid #1a0e00;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg) translateY(-1px);
+    }
+    .checkbox input:disabled ~ .checkbox__box { opacity: 0.35; }
+    .checkbox input:disabled ~ .checkbox__label { opacity: 0.35; }
+    .checkbox__label {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
+    /* ─── CALENDAR ───────────────────────────────────────────── */
+    .calendar {
+      background: var(--color-bg-selectable);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      max-width: 280px;
+    }
+    .calendar__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .calendar__month {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.3px;
+    }
+    .calendar__days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+    .calendar__day-name {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--color-text-disabled);
+      padding: 4px;
+      letter-spacing: 0.5px;
+    }
+    .calendar__dates {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+    .calendar__date {
+      text-align: center;
+      font-size: 12px;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .calendar__date:hover { background: rgba(255,255,255,0.08); color: var(--color-text-primary); }
+    .calendar__date--disabled { color: var(--color-text-disabled); opacity: 0.4; cursor: default; }
+    .calendar__date--disabled:hover { background: none; color: var(--color-text-disabled); }
+    .calendar__date--selected {
+      background: linear-gradient(135deg, var(--color-brand-gold), var(--color-brand-gradient-bottom));
+      color: #1a0e00;
+      font-weight: 600;
+    }
+    .calendar__date--selected:hover { background: linear-gradient(135deg, #f5c87e, #a0733d); }
+    .calendar__date--today {
+      background: rgba(255,208,155,0.15);
+      color: var(--color-brand-gold);
+      font-weight: 600;
+    }
+
+    /* ─── SCREEN GALLERY ─────────────────────────────────────── */
+    .ds-screen-categories { display: flex; flex-direction: column; gap: 40px; }
+    .ds-screen-category__title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-text-disabled);
+      margin-bottom: 16px;
+    }
+    .ds-screen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .ds-screen-card {
+      cursor: pointer;
+    }
+    .ds-screen-card__preview {
+      height: 110px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      margin-bottom: 8px;
+    }
+    .ds-screen-card:hover .ds-screen-card__preview {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+      border-color: rgba(255,255,255,0.16);
+    }
+    .ds-screen-card__name {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      font-weight: 500;
+      display: block;
+      text-align: center;
+    }
+
+    /* ─── DESIGN TOKENS CODE BLOCK ───────────────────────────── */
+    .ds-code-block {
+      position: relative;
+      background: #0e0e0e;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .ds-code-block__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .ds-code-block__dots {
+      display: flex;
+      gap: 6px;
+    }
+    .ds-code-block__dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .ds-code-block__dot--red   { background: #FF5F57; }
+    .ds-code-block__dot--yellow{ background: #FFBD2E; }
+    .ds-code-block__dot--green { background: #28CA41; }
+    .ds-code-block__copy-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-disabled);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ds-code-block__copy-btn:hover {
+      color: var(--color-brand-gold);
+      border-color: rgba(255,208,155,0.3);
+    }
+    .ds-code-block pre {
+      padding: 24px;
+      overflow-x: auto;
+    }
+    .ds-code-block code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.9;
+      color: var(--color-text-secondary);
+    }
+    .token-comment  { color: #666; }
+    .token-var      { color: #71B4FF; }
+    .token-value    { color: #FFD09B; }
+    .token-punct    { color: #868686; }
+
+    /* ─── SPACING EXAMPLES ───────────────────────────────────── */
+    .ds-spacing-examples { margin-top: 32px; }
+    .ds-spacing-examples__title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-text-disabled);
+      margin-bottom: 16px;
+    }
+    .ds-spacing-example {
+      background: var(--color-bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+    .ds-spacing-example__label {
+      font-size: 12px;
+      color: var(--color-text-disabled);
+      margin-top: 12px;
+      display: block;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    .ds-footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 40px 48px;
+    }
+    .ds-footer__content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ds-footer__content p {
+      font-size: 13px;
+      color: var(--color-text-disabled);
+    }
+    .ds-footer__meta { font-size: 12px; }
+
+    /* ─── SECTION DIVIDER LABEL ──────────────────────────────── */
+    .section-number {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-disabled);
+      opacity: 0.5;
+      margin-right: 8px;
+    }
+
+    /* ─── INTERACTIVE DEMO ───────────────────────────────────── */
+    .interactive-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--color-text-disabled);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 24px;
+    }
+    .interactive-note svg { color: var(--color-brand-gold); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .ds-nav { padding: 0 20px; }
+      .ds-nav__links { display: none; }
+      .ds-hero, .ds-main, .ds-footer { padding-left: 20px; padding-right: 20px; }
+      .ds-type-fonts { grid-template-columns: 1fr; }
+      .ds-type-item { grid-template-columns: 100px 1fr; }
+      .ds-type-item__specs { display: none; }
+      .ds-hero__stats { gap: 24px; flex-wrap: wrap; }
+    }
+
+    /* ─── ANIMATION ──────────────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .ds-hero__eyebrow { animation: fadeInUp 0.5s ease both; }
+    .ds-hero__title   { animation: fadeInUp 0.5s 0.1s ease both; }
+    .ds-hero__subtitle{ animation: fadeInUp 0.5s 0.18s ease both; }
+    .ds-hero__badges  { animation: fadeInUp 0.5s 0.25s ease both; }
+    .ds-hero__stats   { animation: fadeInUp 0.5s 0.32s ease both; }
+  </style>
+</head>
+<body>
+
+<!-- Toast notification -->
+<div id="toast">Copied to clipboard</div>
+
+
+<!-- ─── NAV ─────────────────────────────────────────────────────── -->
+<nav class="ds-nav">
+  <div class="ds-nav__brand">
+    <span class="ds-nav__logo">ANACITY Business</span>
+    <div class="ds-nav__divider"></div>
+    <span class="ds-nav__tagline">Design System</span>
+  </div>
+  <ul class="ds-nav__links">
+    <li><a href="#colors">Colors</a></li>
+    <li><a href="#typography">Typography</a></li>
+    <li><a href="#spacing">Spacing</a></li>
+    <li><a href="#components">Components</a></li>
+    <li><a href="#screens">Screens</a></li>
+    <li><a href="#tokens">Tokens</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─────────────────────────────────────────────────────── -->
+<header class="ds-hero">
+  <div class="ds-hero__content">
+    <p class="ds-hero__eyebrow">Visitor Management System</p>
+    <h1 class="ds-hero__title">ANACITY Business<br>Design System</h1>
+    <p class="ds-hero__subtitle">A comprehensive dark-mode design language for mobile-first visitor management. Built for OLED displays with accessible contrast ratios.</p>
+    <div class="ds-hero__badges">
+      <span class="ds-hero__badge"><span class="ds-hero__badge-dot"></span>Mobile First</span>
+      <span class="ds-hero__badge"><span class="ds-hero__badge-dot" style="background:#663879"></span>Dark Mode</span>
+      <span class="ds-hero__badge"><span class="ds-hero__badge-dot" style="background:#5FD796"></span>Accessible</span>
+    </div>
+  </div>
+</header>
+
+<!-- ─── MAIN ──────────────────────────────────────────────────────── -->
+<main class="ds-main">
+
+  <!-- ═══ COLORS ═══════════════════════════════════════════════════ -->
+  <section id="colors" class="ds-section">
+    <div class="ds-section__header">
+      <span class="ds-section__label"><span class="section-number">01</span>Color System</span>
+      <h2 class="ds-section__title">Color Palette</h2>
+      <p class="ds-section__description">A dark-themed palette designed for OLED displays with high contrast ratios and semantic meaning. Click any swatch to copy the hex code.</p>
+    </div>
+
+    <span class="interactive-note">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Click any color card to copy its hex value
+    </span>
+
+    <div class="ds-color-group">
+      <h3 class="ds-color-group__title">Background Colors</h3>
+      <div class="ds-color-grid">
+        <div class="ds-color-card" onclick="copyColor('#121212', this)">
+          <div class="ds-color-card__swatch" style="background-color:#121212;">
+            <div class="ds-color-card__copy-hint">Copy #121212</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Screen Background</span>
+            <span class="ds-color-card__token">--color-bg-screen</span>
+            <span class="ds-color-card__hex">#121212</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#1D1D1D', this)">
+          <div class="ds-color-card__swatch" style="background-color:#1D1D1D;">
+            <div class="ds-color-card__copy-hint">Copy #1D1D1D</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Card Background</span>
+            <span class="ds-color-card__token">--color-bg-card</span>
+            <span class="ds-color-card__hex">#1D1D1D</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#2B2B2B', this)">
+          <div class="ds-color-card__swatch" style="background-color:#2B2B2B;">
+            <div class="ds-color-card__copy-hint">Copy #2B2B2B</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Selectable BG</span>
+            <span class="ds-color-card__token">--color-bg-selectable</span>
+            <span class="ds-color-card__hex">#2B2B2B</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-color-group">
+      <h3 class="ds-color-group__title">Text Colors</h3>
+      <div class="ds-color-grid">
+        <div class="ds-color-card" onclick="copyColor('#EBEBEB', this)">
+          <div class="ds-color-card__swatch" style="background-color:#EBEBEB;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #EBEBEB</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Text Primary</span>
+            <span class="ds-color-card__token">--color-text-primary</span>
+            <span class="ds-color-card__hex">#EBEBEB</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#DBDBDB', this)">
+          <div class="ds-color-card__swatch" style="background-color:#DBDBDB;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #DBDBDB</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Text Secondary</span>
+            <span class="ds-color-card__token">--color-text-secondary</span>
+            <span class="ds-color-card__hex">#DBDBDB</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#ADADAD', this)">
+          <div class="ds-color-card__swatch" style="background-color:#ADADAD;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #ADADAD</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Text Tertiary</span>
+            <span class="ds-color-card__token">--color-text-tertiary</span>
+            <span class="ds-color-card__hex">#ADADAD</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#868686', this)">
+          <div class="ds-color-card__swatch" style="background-color:#868686;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #868686</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Text Disabled</span>
+            <span class="ds-color-card__token">--color-text-disabled</span>
+            <span class="ds-color-card__hex">#868686</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-color-group">
+      <h3 class="ds-color-group__title">Brand Colors</h3>
+      <div class="ds-color-grid">
+        <div class="ds-color-card" onclick="copyColor('#FFD09B', this)">
+          <div class="ds-color-card__swatch" style="background: linear-gradient(135deg, #FFD09B, #B0814D);">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #FFD09B</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Gold Primary</span>
+            <span class="ds-color-card__token">--color-brand-gold</span>
+            <span class="ds-color-card__hex">#FFD09B → #B0814D</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#663879', this)">
+          <div class="ds-color-card__swatch" style="background-color:#663879;">
+            <div class="ds-color-card__copy-hint">Copy #663879</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Purple Accent</span>
+            <span class="ds-color-card__token">--color-brand-purple</span>
+            <span class="ds-color-card__hex">#663879</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#B0814D', this)">
+          <div class="ds-color-card__swatch" style="background-color:#B0814D;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #B0814D</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Gold Dark</span>
+            <span class="ds-color-card__token">--color-brand-gradient-bottom</span>
+            <span class="ds-color-card__hex">#B0814D</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-color-group">
+      <h3 class="ds-color-group__title">Semantic Colors</h3>
+      <div class="ds-color-grid">
+        <div class="ds-color-card" onclick="copyColor('#5FD796', this)">
+          <div class="ds-color-card__swatch" style="background-color:#5FD796;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #5FD796</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Success</span>
+            <span class="ds-color-card__token">--color-success</span>
+            <span class="ds-color-card__hex">#5FD796</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#EA7C7C', this)">
+          <div class="ds-color-card__swatch" style="background-color:#EA7C7C;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #EA7C7C</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Error</span>
+            <span class="ds-color-card__token">--color-error</span>
+            <span class="ds-color-card__hex">#EA7C7C</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#71B4FF', this)">
+          <div class="ds-color-card__swatch" style="background-color:#71B4FF;">
+            <div class="ds-color-card__copy-hint" style="color:#121212">Copy #71B4FF</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Info</span>
+            <span class="ds-color-card__token">--color-info</span>
+            <span class="ds-color-card__hex">#71B4FF</span>
+          </div>
+        </div>
+        <div class="ds-color-card" onclick="copyColor('#290000', this)">
+          <div class="ds-color-card__swatch" style="background-color:#290000; border: 1px solid #EA7C7C22;">
+            <div class="ds-color-card__copy-hint">Copy #290000</div>
+          </div>
+          <div class="ds-color-card__info">
+            <span class="ds-color-card__name">Error Background</span>
+            <span class="ds-color-card__token">--color-bg-error</span>
+            <span class="ds-color-card__hex">#290000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TYPOGRAPHY ════════════════════════════════════════════════ -->
+  <section id="typography" class="ds-section">
+    <div class="ds-section__header">
+      <span class="ds-section__label"><span class="section-number">02</span>Typography</span>
+      <h2 class="ds-section__title">Type System</h2>
+      <p class="ds-section__description">Readex Pro for all text — headings, UI elements, and body copy. Paired with DM Mono for code and tokens.</p>
+    </div>
+
+    <div class="ds-type-group">
+      <h3 class="ds-type-group__title">Font Families</h3>
+      <div class="ds-type-fonts">
+        <div class="ds-type-font">
+          <span class="ds-type-font__name" style="font-family:'Readex Pro',sans-serif;">Readex Pro</span>
+          <span class="ds-type-font__usage">Headings · UI elements · Labels</span>
+        </div>
+        <div class="ds-type-font">
+          <span class="ds-type-font__name" style="font-family:'Readex Pro',sans-serif; font-weight:400;">Readex Pro</span>
+          <span class="ds-type-font__usage">Body text · Extended reading</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-type-group">
+      <h3 class="ds-type-group__title">Type Scale</h3>
+      <div class="ds-type-scale">
+        <div class="ds-type-item">
+          <span class="ds-type-item__label">h5-Medium</span>
+          <span class="ds-type-item__sample" style="font-size:16px;font-weight:500;line-height:20px;letter-spacing:0px;">Section Headings</span>
+          <span class="ds-type-item__specs">16px / 500 / 20px / 0px</span>
+        </div>
+        <div class="ds-type-item">
+          <span class="ds-type-item__label">h7-Semibold</span>
+          <span class="ds-type-item__sample" style="font-size:12px;font-weight:600;line-height:16px;letter-spacing:-1px;">Labels &amp; Tags</span>
+          <span class="ds-type-item__specs">12px / 600 / 16px / −2px</span>
+        </div>
+        <div class="ds-type-item">
+          <span class="ds-type-item__label">h8-Medium</span>
+          <span class="ds-type-item__sample" style="font-size:10px;font-weight:500;line-height:14px;letter-spacing:-0.5px;">Small Labels</span>
+          <span class="ds-type-item__specs">10px / 500 / 14px / −2px</span>
+        </div>
+        <div class="ds-type-item">
+          <span class="ds-type-item__label">p3-Regular</span>
+          <span class="ds-type-item__sample" style="font-size:12px;font-weight:400;line-height:16px;">Body Text Small</span>
+          <span class="ds-type-item__specs">12px / 400 / 16px / −2px</span>
+        </div>
+        <div class="ds-type-item">
+          <span class="ds-type-item__label">Body 1</span>
+          <span class="ds-type-item__sample" style="font-family:'Readex Pro',sans-serif;font-size:14px;font-weight:400;line-height:20px;letter-spacing:0.16px;">Primary Body Text</span>
+          <span class="ds-type-item__specs">14px / 400 / 20px / +0.16px</span>
+        </div>
+        <div class="ds-type-item">
+          <span class="ds-type-item__label">Body 2</span>
+          <span class="ds-type-item__sample" style="font-family:'Readex Pro',sans-serif;font-size:13px;font-weight:500;line-height:24px;letter-spacing:0.16px;">Secondary Body</span>
+          <span class="ds-type-item__specs">13px / 500 / 24px / +0.16px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-type-group">
+      <h3 class="ds-type-group__title">Text Hierarchy Example</h3>
+      <div class="ds-type-hierarchy">
+        <h4 style="font-size:16px;font-weight:600;color:#EBEBEB;margin-bottom:6px;letter-spacing:-0.5px;">Visitor Details</h4>
+        <p style="font-size:14px;color:#DBDBDB;margin-bottom:4px;">John Smith — Guest Visit</p>
+        <p style="font-size:12px;color:#ADADAD;margin-bottom:12px;">Today at 2:30 PM &nbsp;·&nbsp; Tower A</p>
+        <p style="font-size:12px;color:#868686;font-family:'DM Mono',monospace;">ID: VIS-2026-0342</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SPACING ═══════════════════════════════════════════════════ -->
+  <section id="spacing" class="ds-section">
+    <div class="ds-section__header">
+      <span class="ds-section__label"><span class="section-number">03</span>Spacing</span>
+      <h2 class="ds-section__title">Spacing System</h2>
+      <p class="ds-section__description">4px base grid system. All spacing values are multiples of 4 for visual consistency across layouts.</p>
+    </div>
+
+    <div class="ds-spacing-visual">
+      <div class="ds-spacing-row">
+        <span class="ds-spacing-label">xs</span>
+        <div class="ds-spacing-bar" style="width:4px;"></div>
+        <span class="ds-spacing-value">4px</span>
+      </div>
+      <div class="ds-spacing-row">
+        <span class="ds-spacing-label">sm</span>
+        <div class="ds-spacing-bar" style="width:8px;"></div>
+        <span class="ds-spacing-value">8px</span>
+      </div>
+      <div class="ds-spacing-row">
+        <span class="ds-spacing-label">md</span>
+        <div class="ds-spacing-bar" style="width:12px;"></div>
+        <span class="ds-spacing-value">12px</span>
+      </div>
+      <div class="ds-spacing-row">
+        <span class="ds-spacing-label">lg</span>
+        <div class="ds-spacing-bar" style="width:16px;"></div>
+        <span class="ds-spacing-value">16px</span>
+      </div>
+      <div class="ds-spacing-row">
+        <span class="ds-spacing-label">xl</span>
+        <div class="ds-spacing-bar" style="width:24px;"></div>
+        <span class="ds-spacing-value">24px</span>
+      </div>
+      <div class="ds-spacing-row">
+        <span class="ds-spacing-label">xxl</span>
+        <div class="ds-spacing-bar" style="width:32px;"></div>
+        <span class="ds-spacing-value">32px</span>
+      </div>
+    </div>
+
+    <div class="ds-spacing-examples">
+      <h3 class="ds-spacing-examples__title">Common Patterns</h3>
+      <div class="ds-spacing-example">
+        <div style="padding:16px;background:#2B2B2B;border-radius:8px;">
+          <span style="color:#EBEBEB;font-size:13px;">Card Content — 16px padding</span>
+        </div>
+        <span class="ds-spacing-example__label">Standard card: <code style="font-family:var(--font-mono);color:var(--color-brand-gold);">--spacing-lg (16px)</code></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COMPONENTS ════════════════════════════════════════════════ -->
+  <section id="components" class="ds-section">
+    <div class="ds-section__header">
+      <span class="ds-section__label"><span class="section-number">04</span>Components</span>
+      <h2 class="ds-section__title">UI Components</h2>
+      <p class="ds-section__description">Reusable components following atomic design methodology. All components are interactive below.</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="ds-component-group">
+      <h3 class="ds-component-group__title">Buttons</h3>
+      <div class="ds-component-showcase">
+        <div class="ds-component-row">
+          <button class="btn btn--primary" onclick="this.textContent='Clicked!';setTimeout(()=>this.textContent='Primary Button',1200)">Primary Button</button>
+          <button class="btn btn--primary" disabled>Disabled</button>
+          <button class="btn btn--secondary" onclick="this.textContent='Done ✓';setTimeout(()=>this.textContent='Secondary',1200)">Secondary</button>
+          <button class="btn btn--ghost">Ghost Button</button>
+        </div>
+        <div class="ds-component-row">
+          <button class="btn btn--success">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Approve
+          </button>
+          <button class="btn btn--error">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            Decline
+          </button>
+          <button class="btn btn--icon" title="User profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
+          <button class="btn btn--fab" title="Add new">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Fields -->
+    <div class="ds-component-group">
+      <h3 class="ds-component-group__title">Input Fields</h3>
+      <div class="ds-component-showcase">
+        <div class="ds-component-row ds-component-row--vertical" style="max-width:400px;gap:16px;">
+          <div class="input-group">
+            <label class="input-label">Visitor Name</label>
+            <input type="text" class="input" placeholder="Enter visitor name…">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Visitor Type</label>
+            <div class="dropdown" onclick="toggleDropdown(this)">
+              <span>Select visitor type</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Search</label>
+            <div class="input--with-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="text" placeholder="Search visitors…">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="ds-component-group">
+      <h3 class="ds-component-group__title">Cards</h3>
+      <div class="ds-component-showcase">
+        <div class="ds-component-row" style="align-items:flex-start;flex-wrap:wrap;">
+          <div class="card" style="width:260px;">
+            <div class="card__header">
+              <h4 class="card__title">Visitor Card</h4>
+              <span class="card__badge card__badge--success">Upcoming</span>
+            </div>
+            <div class="card__content">
+              <p class="card__text">John Smith</p>
+              <p class="card__meta">Today, 2:30 PM · Tower A</p>
+            </div>
+            <div class="card__actions">
+              <button class="btn btn--small btn--ghost">Decline</button>
+              <button class="btn btn--small btn--primary">Approve</button>
+            </div>
+          </div>
+
+          <div class="card card--contact" style="width:260px;">
+            <div class="avatar">JS</div>
+            <div class="card__content" style="padding:0;flex:1;">
+              <h4 class="card__title">John Smith</h4>
+              <p class="card__meta">Guest · Tower A</p>
+            </div>
+            <button class="btn btn--icon btn--small">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-2.2 2.2a15.057 15.057 0 01-6.59-6.59l2.2-2.21c.28-.26.36-.65.25-1.01A11.36 11.36 0 018.59 3.99c0-.55-.45-1-1-1H4.08c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Display -->
+    <div class="ds-component-group">
+      <h3 class="ds-component-group__title">Data Display</h3>
+      <div class="ds-component-showcase" style="max-width:480px;">
+        <div class="data-row"><span class="data-row__label">Visitor Name</span><span class="data-row__value">John Smith</span></div>
+        <div class="data-row"><span class="data-row__label">Visit Type</span><span class="data-row__value">Guest</span></div>
+        <div class="data-row"><span class="data-row__label">Date &amp; Time</span><span class="data-row__value">Today, 2:30 PM</span></div>
+        <div class="data-row"><span class="data-row__label">Status</span><span class="data-row__value data-row__value--success">Approved</span></div>
+      </div>
+    </div>
+
+    <!-- Status Badges -->
+    <div class="ds-component-group">
+      <h3 class="ds-component-group__title">Status Badges</h3>
+      <div class="ds-component-showcase">
+        <div class="ds-component-row">
+          <span class="badge badge--success">Upcoming</span>
+          <span class="badge badge--info">Inside</span>
+          <span class="badge badge--warning">Pending</span>
+          <span class="badge badge--error">Declined</span>
+          <span class="badge badge--neutral">Past</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkboxes -->
+    <div class="ds-component-group">
+      <h3 class="ds-component-group__title">Checkbox</h3>
+      <div class="ds-component-showcase">
+        <div class="ds-component-row ds-component-row--vertical" style="gap:14px;max-width:300px;">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span class="checkbox__box"></span>
+            <span class="checkbox__label">Selected option</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox">
+            <span class="checkbox__box"></span>
+            <span class="checkbox__label">Unselected option</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" disabled>
+            <span class="checkbox__box"></span>
+            <span class="checkbox__label">Disabled option</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="ds-component-group">
+      <h3 class="ds-component-group__title">Calendar</h3>
+      <div class="ds-component-showcase">
+        <div class="calendar">
+          <div class="calendar__header">
+            <button class="btn btn--icon btn--ghost" style="padding:6px;" onclick="prevMonth()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="calendar__month" id="calMonth">March 2026</span>
+            <button class="btn btn--icon btn--ghost" style="padding:6px;" onclick="nextMonth()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div class="calendar__days">
+            <span class="calendar__day-name">Su</span>
+            <span class="calendar__day-name">Mo</span>
+            <span class="calendar__day-name">Tu</span>
+            <span class="calendar__day-name">We</span>
+            <span class="calendar__day-name">Th</span>
+            <span class="calendar__day-name">Fr</span>
+            <span class="calendar__day-name">Sa</span>
+          </div>
+          <div class="calendar__dates" id="calDates"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SCREEN GALLERY ════════════════════════════════════════════ -->
+  <section id="screens" class="ds-section">
+    <div class="ds-section__header">
+      <span class="ds-section__label"><span class="section-number">05</span>Screen Gallery</span>
+      <h2 class="ds-section__title">Screen Gallery</h2>
+      <p class="ds-section__description">80+ screens covering all user flows and states across the visitor management platform.</p>
+    </div>
+
+    <div class="ds-screen-categories">
+      <div>
+        <h3 class="ds-screen-category__title">Home &amp; Dashboard</h3>
+        <div class="ds-screen-grid">
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#1D1D1D 0%,#2B2B2B 100%);">
+              <div style="padding:16px;">
+                <div style="height:8px;width:60%;background:#663879;border-radius:4px;margin-bottom:8px;"></div>
+                <div style="height:6px;width:40%;background:#2B2B2B;border-radius:3px;margin-bottom:12px;"></div>
+                <div style="height:36px;background:#2B2B2B;border-radius:8px;margin-bottom:8px;"></div>
+                <div style="height:36px;background:#1D1D1D;border-radius:8px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Home</span>
+          </div>
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#1D1D1D 0%,#2B2B2B 100%);">
+              <div style="padding:12px;display:flex;flex-direction:column;gap:6px;">
+                <div style="height:28px;background:#2B2B2B;border-radius:6px;"></div>
+                <div style="height:28px;background:#2B2B2B;border-radius:6px;"></div>
+                <div style="height:28px;background:#2B2B2B;border-radius:6px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">View All</span>
+          </div>
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#1D1D1D 0%,#663879 100%);">
+              <div style="padding:16px;">
+                <div style="height:6px;width:70%;background:rgba(255,208,155,0.6);border-radius:3px;margin-bottom:8px;"></div>
+                <div style="height:6px;width:50%;background:rgba(255,255,255,0.2);border-radius:3px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Activity</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="ds-screen-category__title">Add Visitor Flows</h3>
+        <div class="ds-screen-grid">
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#1D1D1D 0%,#2B2B2B 100%);">
+              <div style="padding:16px;">
+                <div style="height:32px;width:32px;background:#663879;border-radius:50%;margin-bottom:8px;"></div>
+                <div style="height:6px;width:80%;background:#EBEBEB;border-radius:3px;margin-bottom:6px;"></div>
+                <div style="height:6px;width:55%;background:#868686;border-radius:3px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Add Guest</span>
+          </div>
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#1D1D1D 0%,#2B2B2B 100%);">
+              <div style="padding:12px;display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">
+                <div style="height:16px;background:#663879;border-radius:3px;"></div>
+                <div style="height:16px;background:#2B2B2B;border-radius:3px;"></div>
+                <div style="height:16px;background:#2B2B2B;border-radius:3px;"></div>
+                <div style="height:16px;background:#2B2B2B;border-radius:3px;"></div>
+                <div style="height:16px;background:#2B2B2B;border-radius:3px;"></div>
+                <div style="height:16px;background:#2B2B2B;border-radius:3px;"></div>
+                <div style="height:16px;background:#2B2B2B;border-radius:3px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Calendar</span>
+          </div>
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#1D1D1D 0%,#2B2B2B 100%);">
+              <div style="padding:16px;display:flex;flex-direction:column;gap:6px;">
+                <div style="height:30px;background:#2B2B2B;border-radius:6px;display:flex;align-items:center;padding:0 10px;"><div style="height:3px;width:30px;background:#EBEBEB;border-radius:2px;"></div></div>
+                <div style="height:30px;background:#663879;border-radius:6px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Time Slot</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="ds-screen-category__title">Pass Management</h3>
+        <div class="ds-screen-grid">
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#663879 0%,#1D1D1D 100%);">
+              <div style="padding:16px;display:flex;flex-direction:column;align-items:center;">
+                <div style="width:56px;height:56px;background:rgba(255,255,255,0.15);border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.2);"></div>
+                <div style="height:5px;width:72px;background:rgba(255,255,255,0.7);border-radius:3px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Digital Pass</span>
+          </div>
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#1D1D1D 0%,#2B2B2B 100%);">
+              <div style="padding:16px;">
+                <div style="height:7px;width:100%;background:#5FD796;border-radius:4px;margin-bottom:8px;"></div>
+                <div style="height:5px;width:60%;background:#EBEBEB;border-radius:3px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Approved</span>
+          </div>
+          <div class="ds-screen-card">
+            <div class="ds-screen-card__preview" style="background:linear-gradient(135deg,#290000 0%,#1D1D1D 100%);">
+              <div style="padding:16px;">
+                <div style="height:7px;width:100%;background:#EA7C7C;border-radius:4px;margin-bottom:8px;"></div>
+                <div style="height:5px;width:50%;background:#ADADAD;border-radius:3px;"></div>
+              </div>
+            </div>
+            <span class="ds-screen-card__name">Declined</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DESIGN TOKENS ════════════════════════════════════════════ -->
+  <section id="tokens" class="ds-section">
+    <div class="ds-section__header">
+      <span class="ds-section__label"><span class="section-number">06</span>Tokens</span>
+      <h2 class="ds-section__title">Design Tokens</h2>
+      <p class="ds-section__description">CSS custom properties for consistent theming across all components and screens.</p>
+    </div>
+
+    <div class="ds-code-block">
+      <div class="ds-code-block__header">
+        <div class="ds-code-block__dots">
+          <div class="ds-code-block__dot ds-code-block__dot--red"></div>
+          <div class="ds-code-block__dot ds-code-block__dot--yellow"></div>
+          <div class="ds-code-block__dot ds-code-block__dot--green"></div>
+        </div>
+        <button class="ds-code-block__copy-btn" onclick="copyTokens(this)">Copy CSS</button>
+      </div>
+      <pre id="tokenCode"><code><span class="token-punct">:root {</span>
+  <span class="token-comment">/* ── Colors ───────────────────────── */</span>
+  <span class="token-var">--color-bg-screen</span><span class="token-punct">:     </span><span class="token-value">#121212</span><span class="token-punct">;</span>
+  <span class="token-var">--color-bg-card</span><span class="token-punct">:       </span><span class="token-value">#1D1D1D</span><span class="token-punct">;</span>
+  <span class="token-var">--color-bg-selectable</span><span class="token-punct">: </span><span class="token-value">#2B2B2B</span><span class="token-punct">;</span>
+  <span class="token-var">--color-text-primary</span><span class="token-punct">:  </span><span class="token-value">#EBEBEB</span><span class="token-punct">;</span>
+  <span class="token-var">--color-text-secondary</span><span class="token-punct">:</span><span class="token-value">#DBDBDB</span><span class="token-punct">;</span>
+  <span class="token-var">--color-text-tertiary</span><span class="token-punct">: </span><span class="token-value">#ADADAD</span><span class="token-punct">;</span>
+  <span class="token-var">--color-text-disabled</span><span class="token-punct">: </span><span class="token-value">#868686</span><span class="token-punct">;</span>
+  <span class="token-var">--color-brand-purple</span><span class="token-punct">:  </span><span class="token-value">#663879</span><span class="token-punct">;</span>
+  <span class="token-var">--color-brand-gold</span><span class="token-punct">:    </span><span class="token-value">#FFD09B</span><span class="token-punct">;</span>
+  <span class="token-var">--color-success</span><span class="token-punct">:       </span><span class="token-value">#5FD796</span><span class="token-punct">;</span>
+  <span class="token-var">--color-error</span><span class="token-punct">:         </span><span class="token-value">#EA7C7C</span><span class="token-punct">;</span>
+  <span class="token-var">--color-info</span><span class="token-punct">:          </span><span class="token-value">#71B4FF</span><span class="token-punct">;</span>
+  <span class="token-var">--color-bg-error</span><span class="token-punct">:      </span><span class="token-value">#290000</span><span class="token-punct">;</span>
+
+  <span class="token-comment">/* ── Typography ───────────────────── */</span>
+  <span class="token-var">--font-primary</span><span class="token-punct">:   </span><span class="token-value">'Readex Pro'</span><span class="token-punct">, sans-serif;</span>
+  <span class="token-var">--font-secondary</span><span class="token-punct">: </span><span class="token-value">'Readex Pro'</span><span class="token-punct">, sans-serif;</span>
+  <span class="token-var">--font-mono</span><span class="token-punct">:      </span><span class="token-value">'DM Mono'</span><span class="token-punct">, monospace;</span>
+
+  <span class="token-comment">/* ── Spacing ──────────────────────── */</span>
+  <span class="token-var">--spacing-xs</span><span class="token-punct">:  </span><span class="token-value">4px</span><span class="token-punct">;</span>
+  <span class="token-var">--spacing-sm</span><span class="token-punct">:  </span><span class="token-value">8px</span><span class="token-punct">;</span>
+  <span class="token-var">--spacing-md</span><span class="token-punct">:  </span><span class="token-value">12px</span><span class="token-punct">;</span>
+  <span class="token-var">--spacing-lg</span><span class="token-punct">:  </span><span class="token-value">16px</span><span class="token-punct">;</span>
+  <span class="token-var">--spacing-xl</span><span class="token-punct">:  </span><span class="token-value">24px</span><span class="token-punct">;</span>
+  <span class="token-var">--spacing-xxl</span><span class="token-punct">: </span><span class="token-value">32px</span><span class="token-punct">;</span>
+
+  <span class="token-comment">/* ── Border Radius ────────────────── */</span>
+  <span class="token-var">--radius-sm</span><span class="token-punct">:   </span><span class="token-value">8px</span><span class="token-punct">;</span>
+  <span class="token-var">--radius-md</span><span class="token-punct">:   </span><span class="token-value">12px</span><span class="token-punct">;</span>
+  <span class="token-var">--radius-lg</span><span class="token-punct">:   </span><span class="token-value">16px</span><span class="token-punct">;</span>
+  <span class="token-var">--radius-full</span><span class="token-punct">: </span><span class="token-value">9999px</span><span class="token-punct">;</span>
+
+  <span class="token-comment">/* ── Shadows ──────────────────────── */</span>
+  <span class="token-var">--shadow-card</span><span class="token-punct">:     </span><span class="token-value">0 2px 16px rgba(0,0,0,0.4)</span><span class="token-punct">;</span>
+  <span class="token-var">--shadow-selected</span><span class="token-punct">: </span><span class="token-value">inset 0 0 10px #FFBF76</span><span class="token-punct">;</span>
+<span class="token-punct">}</span></code></pre>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────── -->
+<footer class="ds-footer">
+  <div class="ds-footer__content">
+    <p>Dev ACB Design System &nbsp;·&nbsp; Visitor Management Platform</p>
+    <p class="ds-footer__meta" style="color:var(--color-text-disabled);">Built with ❤️ for the team</p>
+  </div>
+</footer>
+
+<script>
+  // ─── TOAST ────────────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  // ─── COPY COLOR ──────────────────────────────────────────────────
+  function copyColor(hex, card) {
+    navigator.clipboard.writeText(hex).then(() => {
+      showToast('Copied ' + hex);
+      card.classList.add('copied');
+      setTimeout(() => card.classList.remove('copied'), 1500);
+    }).catch(() => {
+      // Fallback
+      const el = document.createElement('textarea');
+      el.value = hex;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      showToast('Copied ' + hex);
+    });
+  }
+
+  // ─── COPY TOKENS ─────────────────────────────────────────────────
+  function copyTokens(btn) {
+    const code = document.getElementById('tokenCode').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      showToast('Design tokens copied');
+      setTimeout(() => btn.textContent = 'Copy CSS', 2000);
+    });
+  }
+
+  // ─── DROPDOWN TOGGLE ─────────────────────────────────────────────
+  const dropdownOptions = ['Guest', 'Cab / Taxi', 'Delivery', 'Service', 'Staff'];
+  let dropdownOpen = false;
+  function toggleDropdown(el) {
+    if (dropdownOpen) return;
+    dropdownOpen = true;
+    const menu = document.createElement('div');
+    menu.style.cssText = `
+      position:absolute;z-index:50;
+      background:#1D1D1D;border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px;overflow:hidden;
+      width:${el.offsetWidth}px;margin-top:4px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    `;
+    dropdownOptions.forEach(opt => {
+      const item = document.createElement('div');
+      item.textContent = opt;
+      item.style.cssText = 'padding:10px 14px;font-size:13px;color:#DBDBDB;cursor:pointer;transition:background 0.12s;';
+      item.addEventListener('mouseover', () => item.style.background = '#2B2B2B');
+      item.addEventListener('mouseout',  () => item.style.background = '');
+      item.addEventListener('click', () => {
+        el.querySelector('span').textContent = opt;
+        el.style.color = '#EBEBEB';
+        menu.remove();
+        dropdownOpen = false;
+      });
+      menu.appendChild(item);
+    });
+    el.style.position = 'relative';
+    el.appendChild(menu);
+    const close = (e) => { if (!el.contains(e.target)) { menu.remove(); dropdownOpen = false; document.removeEventListener('click', close); }};
+    setTimeout(() => document.addEventListener('click', close), 0);
+  }
+
+  // ─── CALENDAR ────────────────────────────────────────────────────
+  let calYear = 2026, calMonth = 2; // 0-indexed → March
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function renderCalendar() {
+    const container = document.getElementById('calDates');
+    const label     = document.getElementById('calMonth');
+    label.textContent = MONTHS[calMonth] + ' ' + calYear;
+    container.innerHTML = '';
+
+    const firstDay  = new Date(calYear, calMonth, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const prevDays  = new Date(calYear, calMonth, 0).getDate();
+    const today = new Date();
+
+    // Prev month days
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const s = document.createElement('span');
+      s.className = 'calendar__date calendar__date--disabled';
+      s.textContent = prevDays - i;
+      container.appendChild(s);
+    }
+    // Current month days
+    for (let d = 1; d <= daysInMonth; d++) {
+      const s = document.createElement('span');
+      s.className = 'calendar__date';
+      s.textContent = d;
+      const isToday = (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear());
+      if (isToday) s.classList.add('calendar__date--today');
+      s.addEventListener('click', () => {
+        container.querySelectorAll('.calendar__date--selected').forEach(el => el.classList.remove('calendar__date--selected'));
+        s.classList.add('calendar__date--selected');
+        showToast(`Selected ${MONTHS[calMonth]} ${d}, ${calYear}`);
+      });
+      container.appendChild(s);
+    }
+    // Next month padding
+    const total = firstDay + daysInMonth;
+    const remaining = total % 7 === 0 ? 0 : 7 - (total % 7);
+    for (let d = 1; d <= remaining; d++) {
+      const s = document.createElement('span');
+      s.className = 'calendar__date calendar__date--disabled';
+      s.textContent = d;
+      container.appendChild(s);
+    }
+  }
+
+  function prevMonth() {
+    calMonth--;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  }
+  function nextMonth() {
+    calMonth++;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+  }
+
+  renderCalendar();
+
+  // ─── ACTIVE NAV ──────────────────────────────────────────────────
+  const sections = document.querySelectorAll('.ds-section[id]');
+  const navLinks = document.querySelectorAll('.ds-nav__links a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.ds-nav__links a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
